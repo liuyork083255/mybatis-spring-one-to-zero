@@ -1,17 +1,17 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ *    Copyright 2010-2019 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.mybatis.spring.batch.builder;
 
@@ -59,14 +59,16 @@ class MyBatisBatchItemWriterBuilderTest {
     MockitoAnnotations.initMocks(this);
     {
       Configuration configuration = new Configuration();
-      Environment environment = new Environment("unittest", new JdbcTransactionFactory(), dataSource);
+      Environment environment =
+          new Environment("unittest", new JdbcTransactionFactory(), dataSource);
       configuration.setEnvironment(environment);
       Mockito.when(this.sqlSessionFactory.getConfiguration()).thenReturn(configuration);
-      Mockito.when(this.sqlSessionFactory.openSession(ExecutorType.BATCH)).thenReturn(this.sqlSession);
+      Mockito.when(this.sqlSessionFactory.openSession(ExecutorType.BATCH))
+          .thenReturn(this.sqlSession);
     }
     {
       BatchResult result = new BatchResult(null, null);
-      result.setUpdateCounts(new int[] { 1 });
+      result.setUpdateCounts(new int[] {1});
       Mockito.when(this.sqlSession.flushStatements()).thenReturn(Collections.singletonList(result));
     }
   }
@@ -159,7 +161,8 @@ class MyBatisBatchItemWriterBuilderTest {
     itemWriter.write(foos);
 
     Map<String, Object> parameter = new HashMap<>();
-    parameter.put("now", LocalDateTime.now(Clock.fixed(Instant.ofEpochMilli(0), ZoneId.systemDefault())));
+    parameter.put("now",
+        LocalDateTime.now(Clock.fixed(Instant.ofEpochMilli(0), ZoneId.systemDefault())));
     parameter.put("item", foos.get(0));
     Mockito.verify(this.sqlSession).update("updateFoo", parameter);
     parameter.put("item", foos.get(1));

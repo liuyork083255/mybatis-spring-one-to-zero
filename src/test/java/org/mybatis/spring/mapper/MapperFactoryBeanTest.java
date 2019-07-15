@@ -1,17 +1,17 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ *    Copyright 2010-2019 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.mybatis.spring.mapper;
 
@@ -64,7 +64,7 @@ class MapperFactoryBeanTest extends AbstractMyBatisSpringTest {
     factoryBean.setDatabaseIdProvider(null);
     // mapperLocations properties defaults to null
     factoryBean.setDataSource(dataSource);
-    factoryBean.setPlugins(executorInterceptor);
+    factoryBean.setPlugins(new Interceptor[] { executorInterceptor });
 
     SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
 
@@ -87,9 +87,10 @@ class MapperFactoryBeanTest extends AbstractMyBatisSpringTest {
 
       SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
 
-      assertThrows(org.apache.ibatis.binding.BindingException.class,
-          () -> find(new SqlSessionTemplate(sqlSessionFactory), false));
-      // fail("TestDao's mapper xml should not be loaded");
+      assertThrows(org.apache.ibatis.binding.BindingException.class, () ->
+        find(new SqlSessionTemplate(sqlSessionFactory), false)
+      );
+//      fail("TestDao's mapper xml should not be loaded");
     } catch (MyBatisSystemException mbse) {
       // unwrap exception so the exact MyBatis exception can be tested
       throw mbse.getCause();
@@ -149,9 +150,8 @@ class MapperFactoryBeanTest extends AbstractMyBatisSpringTest {
 
       fail("should not be able to get an SqlSession using non-Spring tx manager when there is an active Spring tx");
     } catch (TransientDataAccessResourceException e) {
-      assertThat(e.getMessage())
-          .isEqualTo("SqlSessionFactory must be using a SpringManagedTransactionFactory in order to use"
-              + " Spring transaction synchronization");
+      assertThat(e.getMessage()).isEqualTo("SqlSessionFactory must be using a SpringManagedTransactionFactory in order to use" +
+          " Spring transaction synchronization");
     } finally {
       // rollback required to close connection
       txManager.rollback(status);

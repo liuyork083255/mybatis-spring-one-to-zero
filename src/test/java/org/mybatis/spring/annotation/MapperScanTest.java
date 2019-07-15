@@ -1,32 +1,29 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ *    Copyright 2010-2019 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.mybatis.spring.annotation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.mybatis.spring.annotation.mapper.ds1.Ds1Mapper;
 import org.mybatis.spring.mapper.AnnotatedMapper;
 import org.mybatis.spring.mapper.MapperInterface;
 import org.mybatis.spring.mapper.MapperSubinterface;
@@ -39,11 +36,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import com.mockrunner.mock.jdbc.MockDataSource;
@@ -199,7 +192,8 @@ class MapperScanTest {
     startContext();
 
     assertThat(applicationContext.getBean("mapperInterface").getClass())
-        .as("scanner should not overwrite existing bean definition").isSameAs(Object.class);
+        .as("scanner should not overwrite existing bean definition")
+        .isSameAs(Object.class);
   }
 
   private void setupSqlSessionFactory() {
@@ -241,7 +235,7 @@ class MapperScanTest {
     applicationContext.registerBeanDefinition("sqlSessionTemplate", definition);
 
     applicationContext.register(AppConfigWithSqlSessionTemplate.class);
-
+    
     startContext();
 
     // all interfaces with methods should be loaded
@@ -249,7 +243,7 @@ class MapperScanTest {
     applicationContext.getBean("mapperSubinterface");
     applicationContext.getBean("mapperChildInterface");
     applicationContext.getBean("annotatedMapper");
-
+    
   }
 
   @Test
@@ -268,37 +262,8 @@ class MapperScanTest {
 
     startContext();
 
-    SqlSessionFactory sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
-    assertEquals(2, sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers().size());
-
     applicationContext.getBean("ds1Mapper");
     applicationContext.getBean("ds2Mapper");
-  }
-
-  @Test
-  void testLazyScanWithPropertySourcesPlaceholderConfigurer() {
-    applicationContext.register(LazyConfigWithPropertySourcesPlaceholderConfigurer.class);
-
-    startContext();
-
-    SqlSessionFactory sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
-    assertEquals(0, sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers().size());
-    applicationContext.getBean(Ds1Mapper.class);
-    assertEquals(1, sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers().size());
-
-  }
-
-  @Test
-  void testLazyConfigWithPropertySource() {
-    applicationContext.register(LazyConfigWithPropertySource.class);
-
-    startContext();
-
-    SqlSessionFactory sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
-    assertEquals(0, sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers().size());
-    applicationContext.getBean(Ds1Mapper.class);
-    assertEquals(1, sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers().size());
-
   }
 
   @Configuration
@@ -353,26 +318,11 @@ class MapperScanTest {
   }
 
   @Configuration
-  @MapperScans({ @MapperScan(basePackages = "org.mybatis.spring.annotation.mapper.ds1"),
-      @MapperScan(basePackages = "org.mybatis.spring.annotation.mapper.ds2") })
+  @MapperScans({
+      @MapperScan(basePackages = "org.mybatis.spring.annotation.mapper.ds1")
+      ,@MapperScan(basePackages = "org.mybatis.spring.annotation.mapper.ds2")
+  })
   public static class AppConfigWithMapperScans {
-  }
-
-  @MapperScan(basePackages = "org.mybatis.spring.annotation.mapper.ds1", lazyInitialization = "${mybatis.lazy-initialization:false}")
-  public static class LazyConfigWithPropertySourcesPlaceholderConfigurer {
-    @Bean
-    static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-      PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-      configurer.setLocation(new ClassPathResource("/org/mybatis/spring/annotation/scan.properties"));
-      return configurer;
-    }
-
-  }
-
-  @MapperScan(basePackages = "org.mybatis.spring.annotation.mapper.ds1", lazyInitialization = "${mybatis.lazy-initialization:false}")
-  @PropertySource("classpath:/org/mybatis/spring/annotation/scan.properties")
-  public static class LazyConfigWithPropertySource {
-
   }
 
   public static class BeanNameGenerator implements org.springframework.beans.factory.support.BeanNameGenerator {

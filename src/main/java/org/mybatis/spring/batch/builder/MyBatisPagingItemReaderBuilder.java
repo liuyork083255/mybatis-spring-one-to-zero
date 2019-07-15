@@ -1,17 +1,17 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ *    Copyright 2010-2019 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.mybatis.spring.batch.builder;
 
@@ -40,8 +40,7 @@ public class MyBatisPagingItemReaderBuilder<T> {
   /**
    * Set the {@link SqlSessionFactory} to be used by writer for database access.
    *
-   * @param sqlSessionFactory
-   *          the {@link SqlSessionFactory} to be used by writer for database access
+   * @param sqlSessionFactory the {@link SqlSessionFactory} to be used by writer for database access
    * @return this instance for method chaining
    * @see MyBatisPagingItemReader#setSqlSessionFactory(SqlSessionFactory)
    */
@@ -53,8 +52,7 @@ public class MyBatisPagingItemReaderBuilder<T> {
   /**
    * Set the query id identifying the statement in the SqlMap configuration file.
    *
-   * @param queryId
-   *          the id for the query
+   * @param queryId the id for the query
    * @return this instance for method chaining
    * @see MyBatisPagingItemReader#setQueryId(String)
    */
@@ -66,8 +64,7 @@ public class MyBatisPagingItemReaderBuilder<T> {
   /**
    * Set the parameter values to be used for the query execution.
    *
-   * @param parameterValues
-   *          the parameter values to be used for the query execution
+   * @param parameterValues the parameter values to be used for the query execution
    * @return this instance for method chaining
    * @see MyBatisPagingItemReader#setParameterValues(Map)
    */
@@ -79,8 +76,7 @@ public class MyBatisPagingItemReaderBuilder<T> {
   /**
    * The number of records to request per page/query. Defaults to 10. Must be greater than zero.
    *
-   * @param pageSize
-   *          number of items
+   * @param pageSize number of items
    * @return this instance for method chaining
    * @see org.springframework.batch.item.database.AbstractPagingItemReader#setPageSize(int)
    */
@@ -90,11 +86,11 @@ public class MyBatisPagingItemReaderBuilder<T> {
   }
 
   /**
-   * Configure if the state of the {@link org.springframework.batch.item.ItemStreamSupport} should be persisted within
-   * the {@link org.springframework.batch.item.ExecutionContext} for restart purposes.
+   * Configure if the state of the {@link org.springframework.batch.item.ItemStreamSupport} should
+   * be persisted within the {@link org.springframework.batch.item.ExecutionContext} for restart
+   * purposes.
    *
-   * @param saveState
-   *          defaults to true
+   * @param saveState defaults to true
    * @return The current instance of the builder.
    * @see org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setSaveState(boolean)
    */
@@ -106,8 +102,7 @@ public class MyBatisPagingItemReaderBuilder<T> {
   /**
    * Configure the max number of items to be read.
    *
-   * @param maxItemCount
-   *          the max items to be read
+   * @param maxItemCount the max items to be read
    * @return The current instance of the builder.
    * @see org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setMaxItemCount(int)
    */

@@ -1,17 +1,17 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ *    Copyright 2010-2017 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.mybatis.spring;
 
@@ -53,10 +53,10 @@ public abstract class AbstractMyBatisSpringTest {
   public static void setupBase() throws Exception {
     // create an SqlSessionFactory that will use SpringManagedTransactions
     SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-    factoryBean.setMapperLocations(new ClassPathResource("org/mybatis/spring/TestMapper.xml"));
+    factoryBean.setMapperLocations(new Resource[] { new ClassPathResource("org/mybatis/spring/TestMapper.xml") });
     // note running without SqlSessionFactoryBean.configLocation set => default configuration
     factoryBean.setDataSource(dataSource);
-    factoryBean.setPlugins(executorInterceptor);
+    factoryBean.setPlugins(new Interceptor[] { executorInterceptor });
 
     exceptionTranslator = new MyBatisExceptionTranslator(dataSource, true);
 
@@ -107,8 +107,8 @@ public abstract class AbstractMyBatisSpringTest {
   }
 
   protected void assertExecuteCount(int count) {
-    assertThat(connection.getPreparedStatementResultSetHandler().getExecutedStatements().size())
-        .as("should have executed %d SQL statements", count).isEqualTo(count);
+    assertThat(connection.getPreparedStatementResultSetHandler().getExecutedStatements().size()).as(
+        "should have executed %d SQL statements", count).isEqualTo(count);
   }
 
   protected void assertConnectionClosed(MockConnection connection) {
@@ -133,8 +133,8 @@ public abstract class AbstractMyBatisSpringTest {
   }
 
   /*
-   * Setup a new Connection before each test since its closed state will need to be checked afterwards and there is no
-   * Connection.open().
+   * Setup a new Connection before each test since its closed state will need to be checked
+   * afterwards and there is no Connection.open().
    */
   @BeforeEach
   public void setupConnection() throws SQLException {

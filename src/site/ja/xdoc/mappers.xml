@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2010-2019 the original author or authors.
+       Copyright 2010-2019 the original author or authors.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+          http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
 
 -->
 <document xmlns="http://maven.apache.org/XDOC/2.0"
@@ -110,34 +110,7 @@ public MapperFactoryBean<UserMapper> userMapper() throws Exception {
         <li>Spring の XML 設定ファイルに <code>MapperScannerConfigurer</code> のエントリーを追加する。</li>
       </ul>
       
-      <p><code>&lt;mybatis:scan/&gt;</code> または <code>@MapperScan</code> を使う場合は MyBatis-Spring 1.2.0 以降が必要です。また <code>@MapperScan</code> を使う場合は Spring 3.1 以降が必要となります。</p>
-
-      <p>
-        2.0.2以降では、Mapperの自動検出機能は、Mapper Beanの遅延初期化の有効/無効を制御するオプション（<code>lazy-initialization</code>）をサポートします。
-        このオプションを追加する動機は、Spring Boot 2.2でサポートされた遅延初期化を制御する機能をサポートすることです。
-        このオプションのデフォルトは<code>false</code>です（遅延初期化を使用しません）。
-        開発者がMapper Beanを遅延初期化したい場合は、明示的にこのオプションを<code>true</code>に設定する必要があります。
-      </p>
-      <p>
-        <span class="label important">重要</span> 遅延初期化機能を使用する場合は、開発者は以下の制限を理解しておく必要があります。
-        以下の条件のいずれかに一致する場合、通常あなたのアプリケーションで遅延初期化機能を使用することはできません。
-      </p>
-      <ul>
-        <li><code><![CDATA[<association>]]></code>(<code>@One</code>) and <code><![CDATA[<collection>]]></code>(<code>@Many</code>)を利用して、<b>他のMapperの</b>ステートメントを参照している場合</li>
-        <li><code><![CDATA[<include>]]></code>を利用して、<b>他のMapperの</b>フラグメントをインクルードしている場合</li>
-        <li><code><![CDATA[<cache-ref>]]></code>(<code>@CacheNamespaceRef</code>)を利用して、<b>他のMapperの</b>キャッシュを参照している場合</li>
-        <li><code><![CDATA[<select resultMap="...">]]></code>(<code>@ResultMap</code>)を利用して、<b>他のMapperの</b>結果マッピングを参照している場合</li>
-      </ul>
-
-      <p>
-        <span class="label important">NOTE</span> しかしながら、以下のように<code>@DependsOn</code>(Springの機能)を利用して、
-        依存するMapper Beanも同時に初期化すると遅延初期化機能を利用することができるようになります。
-      </p>
-
-      <source><![CDATA[@DependsOn("vendorMapper")
-public interface GoodsMapper {
-  // ...
-}]]></source>
+      <p><code>&lt;mybatis:scan/&gt;</code> または <code>@MapperScan</code> を使う場合は MyBatis-Spring 1.2.0 以降が必要です。また <code>@MapperScan</code> を使う場合は Spring 3.1 以降が必要となります。</p> 
 
       <h4>&lt;mybatis:scan/&gt;</h4>
       
