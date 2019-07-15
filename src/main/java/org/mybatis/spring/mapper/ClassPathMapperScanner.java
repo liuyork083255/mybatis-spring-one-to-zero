@@ -47,20 +47,18 @@ import java.util.Set;
  *
  * @author Hunter Presnall
  * @author Eduardo Macarron
- *
  * @see MapperFactoryBean
  * @since 1.2.0
- *
+ * <p>
  * one-to-zero:
- *  mapper 接口映射器的扫描类
- *  mapper 映射器的发现有三种：http://www.mybatis.org/spring/zh/mappers.html
- *    · 使用 <mybatis:scan/> 元素
- *    · 使用 @MapperScan 注解
- *    · 在经典 Spring XML 配置文件中注册一个 MapperScannerConfigurer
- *    但是不管是哪一种，它们都将会使用到 ClassPathMapperScanner 类的解析
- *  前面两种方式都是利用 {@link org.mybatis.spring.annotation.MapperScannerRegistrar}，
- *  第三种使用 {@link MapperScannerConfigurer}
- *
+ * mapper 接口映射器的扫描类
+ * mapper 映射器的发现有三种：http://www.mybatis.org/spring/zh/mappers.html
+ * · 使用 <mybatis:scan/> 元素
+ * · 使用 @MapperScan 注解
+ * · 在经典 Spring XML 配置文件中注册一个 MapperScannerConfigurer
+ * 但是不管是哪一种，它们都将会使用到 ClassPathMapperScanner 类的解析
+ * 前面两种方式都是利用 {@link org.mybatis.spring.annotation.MapperScannerRegistrar}，
+ * 第三种使用 {@link MapperScannerConfigurer}
  */
 public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
@@ -178,6 +176,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     public Set<BeanDefinitionHolder> doScan(String... basePackages) {
         /*
         * 调用父方法搜索，它将搜索并注册所有候选项。
+        * 比如 basePackages 下面有两个 mapper 接口，这里就会返回两个 beanDefinition
         */
         Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
 
@@ -194,13 +193,16 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
         GenericBeanDefinition definition;
         for (BeanDefinitionHolder holder : beanDefinitions) {
+            /* 可以理解这里的 holder 就是一个 mapper 接口定义 */
+
             definition = (GenericBeanDefinition) holder.getBeanDefinition();
+
+            /* 获取 mapper 接口的全类路径 */
             String beanClassName = definition.getBeanClassName();
-            LOGGER.debug(() -> "Creating MapperFactoryBean with name '" + holder.getBeanName()
-                    + "' and '" + beanClassName + "' mapperInterface");
 
             // the mapper interface is the original class of the bean
             // but, the actual class of the bean is MapperFactoryBean
+            /* 这里很重要，mapper 接口只是一个接口，并没有实现类，所以 bean 的实际类是 MapperFactoryBean */
             definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
             definition.setBeanClass(this.mapperFactoryBeanClass);
 

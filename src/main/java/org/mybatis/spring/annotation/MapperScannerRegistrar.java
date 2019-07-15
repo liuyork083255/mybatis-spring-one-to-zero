@@ -44,15 +44,13 @@ import org.springframework.util.StringUtils;
  * @author Michael Lanyon
  * @author Eduardo Macarron
  * @author Putthiphong Boonphong
- *
  * @see MapperFactoryBean
  * @see ClassPathMapperScanner
  * @since 1.2.0
- *
+ * <p>
  * oen-to-zero：
- *  这个类是用于解析注解 {@link MapperScan}，也就是说如果使用了 java 配置注解 MapperScan，那么程序启动会使用 MapperScannerRegistrar 进行解析
- *  如果没有使用 MapperScan 注解，那么就不会使用到该类
- *
+ * 这个类是用于解析注解 {@link MapperScan}，也就是说如果使用了 java 配置注解 MapperScan，那么程序启动会使用 MapperScannerRegistrar 进行解析
+ * 如果没有使用 MapperScan 注解，那么就不会使用到该类
  */
 public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
 
@@ -68,7 +66,6 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
     /**
      * 由于实现了 ImportBeanDefinitionRegistrar 接口，所以会自动被调用并且注册bean到容器中
-     * 这里并没有将 MapperScannerRegistrar 自己注册到容器中，而是将
      */
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
@@ -87,6 +84,7 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
     void registerBeanDefinitions(AnnotationAttributes annoAttrs, BeanDefinitionRegistry registry) {
 
+        /* 核心解析扫描路径类 */
         ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
 
         // this check is needed in Spring 3.1
@@ -134,6 +132,7 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
     /**
      * A {@link MapperScannerRegistrar} for {@link MapperScans}.
+     *
      * @since 2.0.0
      */
     static class RepeatingRegistrar extends MapperScannerRegistrar {

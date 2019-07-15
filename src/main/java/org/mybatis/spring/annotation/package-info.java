@@ -14,6 +14,8 @@
  * limitations under the License.
  * <p>
  * Contains MyBatis annotations
+ * <p>
+ * Contains MyBatis annotations
  */
 /**
  * Contains MyBatis annotations
