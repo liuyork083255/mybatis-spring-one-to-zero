@@ -109,6 +109,9 @@ import org.springframework.util.StringUtils;
  *       基于这个原因，上述的属性已被废弃，现在建议使用 sqlSessionFactoryBeanName 和 sqlSessionTemplateBeanName 属性
  *  <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
  *
+ * Note：
+ *  并不是实现了 BeanDefinitionRegistryPostProcessor 接口就会被回调接口方法，而是需要这个 MapperScannerConfigurer 注入容器
+ *  才可以，也就是说如果没有配置 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"> 这个类就不会被加载
  */
 public class MapperScannerConfigurer implements BeanDefinitionRegistryPostProcessor, InitializingBean, ApplicationContextAware, BeanNameAware {
 
@@ -339,7 +342,7 @@ public class MapperScannerConfigurer implements BeanDefinitionRegistryPostProces
             processPropertyPlaceHolders();
         }
 
-    /* 使用 ClassPathMapperScanner 来扫描 basePackage 下的所有接口 */
+        /* 使用 ClassPathMapperScanner 来扫描 basePackage 下的所有接口 */
         ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
         scanner.setAddToConfig(this.addToConfig);
         scanner.setAnnotationClass(this.annotationClass);
@@ -352,10 +355,10 @@ public class MapperScannerConfigurer implements BeanDefinitionRegistryPostProces
         scanner.setBeanNameGenerator(this.nameGenerator);
         scanner.setMapperFactoryBeanClass(this.mapperFactoryBeanClass);
         scanner.registerFilters();
-    /*
-     * 1 basePackage 是字符串形式，所有如果有多个包可以使用分隔符
-     * 2 ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS 就是支持的分隔符
-     */
+        /*
+         * 1 basePackage 是字符串形式，所有如果有多个包可以使用分隔符
+         * 2 ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS 就是支持的分隔符
+         */
         scanner.scan(StringUtils.tokenizeToStringArray(this.basePackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS));
     }
 

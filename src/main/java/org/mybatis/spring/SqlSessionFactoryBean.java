@@ -84,16 +84,17 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
  * @see #setDataSource
  * <p>
  * one-to-zero:
- * 在原始的 mybatis 中，SqlSessionFactory 是通过 SqlSessionFactoryBuilder 创建，而在 spring 中，则是 SqlSessionFactoryBean 负责创建
- * SqlSessionFactoryBean 实现了 FactoryBean 接口{@link #getObject()}
- * 这个类需要被spring注入
- * 1 spring 项目则通过 xml-bean 标签注入
- * 2 spring-boot 项目则通过 java 方式注入
- * 一旦注入，就会自动调用 {@link FactoryBean#getObject()} 获取工厂实例
- * <p>
- * <p>
- * 有一个疑问？
- * 为什么在 SqlSessionFactoryBean 中没有一个接收 mapper 接口的属性呢，而是要单独配置 MapperScan ?
+ *  在原始的 mybatis 中，SqlSessionFactory 是通过 SqlSessionFactoryBuilder 创建，而在 spring 中，则是 SqlSessionFactoryBean 负责创建
+ *  SqlSessionFactoryBean 实现了 FactoryBean 接口{@link #getObject()}
+ *  这个类需要被spring注入
+ *      1 spring 项目则通过 xml-bean 标签注入
+ *      2 spring-boot 项目则通过 java 方式注入
+ *      一旦注入，就会自动调用 {@link FactoryBean#getObject()} 获取工厂实例
+ *
+ *
+ *  有一个疑问？
+ *  为什么在 SqlSessionFactoryBean 中没有一个接收 mapper 接口的属性呢，而是要单独配置 MapperScan ?
+ *
  */
 public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 

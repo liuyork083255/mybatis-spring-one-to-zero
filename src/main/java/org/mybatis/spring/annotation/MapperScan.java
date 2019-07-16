@@ -89,6 +89,8 @@ public @interface MapperScan {
      * {@code @MapperScan("org.my.pkg")} instead of {@code @MapperScan(basePackages = "org.my.pkg"})}.
      *
      * @return base package names
+     *
+     * MapperScan("org.my.pkg") 可以取代 MapperScan(basePackages = "org.my.pkg"})
      */
     String[] value() default {};
 

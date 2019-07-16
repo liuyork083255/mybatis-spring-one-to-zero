@@ -87,14 +87,20 @@ public final class SqlSessionUtils {
         notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
         notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);
 
+        /* 从线程中获取 sqlSession */
         SqlSessionHolder holder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
 
+        /* 如果线程中有说明开启了事务 */
         SqlSession session = sessionHolder(executorType, holder);
         if (session != null) {
             return session;
         }
 
         LOGGER.debug(() -> "Creating a new SqlSession");
+        /*
+         * 如果线程中没有说明没有开启事务，所以新建一个 sqlSession
+         * 这里新建 sqlSession 并不是就是意味着新建一个连接，因为存在连接池概念
+         */
         session = sessionFactory.openSession(executorType);
 
         registerSessionHolder(sessionFactory, executorType, exceptionTranslator, session);

@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.TransactionIsolationLevel;
+import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
@@ -28,6 +29,10 @@ import org.apache.ibatis.transaction.TransactionFactory;
  * Creates a {@code SpringManagedTransaction}.
  *
  * @author Hunter Presnall
+ * one-to-zero:
+ *  spring 事务管理类工厂，创建的事务管理类就是 {@link SpringManagedTransaction}
+ *  通过看了 mybatis 源码知道：{@link org.apache.ibatis.mapping.Environment} 里面包含了事务工厂
+ *  每次调用获取一个 sqlSession {@link DefaultSqlSessionFactory#openSession()} 都会通过工厂新建一个事务
  */
 public class SpringManagedTransactionFactory implements TransactionFactory {
 

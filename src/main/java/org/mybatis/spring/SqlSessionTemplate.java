@@ -81,6 +81,8 @@ import org.springframework.dao.support.PersistenceExceptionTranslator;
  *  当调用 SQL 方法时（包括由 getMapper() 方法返回的映射器中的方法），SqlSessionTemplate 将会保证使用的 SqlSession 与当前 Spring 的事务相关。
  *  此外，它管理 session 的生命周期，包含必要的关闭、提交或回滚操作，也就是全局
  *
+ * 被创建的机制是：{@link org.mybatis.spring.support.SqlSessionDaoSupport#setSqlSessionFactory(SqlSessionFactory)}
+ *
  */
 public class SqlSessionTemplate implements SqlSession, DisposableBean {
 
@@ -140,6 +142,11 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
         this.sqlSessionFactory = sqlSessionFactory;
         this.executorType = executorType;
         this.exceptionTranslator = exceptionTranslator;
+        /**
+         * 这里就是代理核心
+         * 在和 spring 或者 spring-boot 结合后，所有 {@link org.apache.ibatis.binding.MapperProxy#sqlSession} 都是这个类
+         * 而这个类在调用 {@link SqlSession} 所有的接口都是采用 sqlSessionProxy 来代理，具体逻辑 {@link SqlSessionInterceptor}
+         */
         this.sqlSessionProxy = (SqlSession) newProxyInstance(
                 SqlSessionFactory.class.getClassLoader(),
                 new Class[]{SqlSession.class},
@@ -436,12 +443,25 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
     private class SqlSessionInterceptor implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = getSqlSession(
-                    SqlSessionTemplate.this.sqlSessionFactory,
-                    SqlSessionTemplate.this.executorType,
-                    SqlSessionTemplate.this.exceptionTranslator);
+            /*
+             * 调用 SqlSessionUtils 的 getSqlSession 方法从 Spring 的事务管理器获取合适的 SqlSession
+             * 这里就是保证 SqlSessionTemplate 即便是单例，但是同样是线程安全的
+             */
+            SqlSession sqlSession = getSqlSession(SqlSessionTemplate.this.sqlSessionFactory,
+                    SqlSessionTemplate.this.executorType, SqlSessionTemplate.this.exceptionTranslator);
+
             try {
+                /*
+                 * 这里的 method 就是 mapper 对应的方法，而这里 sqlSession 就是真正执行这个方法的对象
+                 * args 就是这个方法的参数
+                 * 所以效果就是: sqlSession.method(args)
+                 */
                 Object result = method.invoke(sqlSession, args);
+
+                /*
+                 * 判断 sqlSession 是否被 Spring 事务管理，也就是 sqlSession 被放在 Spring 事务管理的本地线程缓存中。
+                 * 如果不是，则需要自己提交。如果是，则 Spring 通过代理机制，进行提交和回滚
+                 */
                 if (!isSqlSessionTransactional(sqlSession, SqlSessionTemplate.this.sqlSessionFactory)) {
                     // force commit even on non-dirty sessions because some databases require
                     // a commit/rollback before calling close()
@@ -449,6 +469,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
                 }
                 return result;
             } catch (Throwable t) {
+                /* 如果出现异常，则利用异常转换器将Mybatis的异常转为Spring的DataAccessException */
                 Throwable unwrapped = unwrapThrowable(t);
                 if (SqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
                     // release the connection to avoid a deadlock if the translator is no loaded. See issue #22
@@ -461,6 +482,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
                 }
                 throw unwrapped;
             } finally {
+                /* 方法调用完毕后，关闭sqlSession连接 */
                 if (sqlSession != null) {
                     closeSqlSession(sqlSession, SqlSessionTemplate.this.sqlSessionFactory);
                 }

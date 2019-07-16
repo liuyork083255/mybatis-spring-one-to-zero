@@ -49,8 +49,8 @@ import org.springframework.util.StringUtils;
  * @since 1.2.0
  * <p>
  * oen-to-zero：
- * 这个类是用于解析注解 {@link MapperScan}，也就是说如果使用了 java 配置注解 MapperScan，那么程序启动会使用 MapperScannerRegistrar 进行解析
- * 如果没有使用 MapperScan 注解，那么就不会使用到该类
+ *  这个类是用于解析注解 {@link MapperScan}，也就是说如果使用了 java 配置注解 MapperScan，那么程序启动会使用 MapperScannerRegistrar 进行解析
+ *  如果没有使用 MapperScan 注解，那么就不会使用到该类
  */
 public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
 

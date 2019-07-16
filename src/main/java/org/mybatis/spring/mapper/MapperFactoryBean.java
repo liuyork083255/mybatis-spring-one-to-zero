@@ -19,9 +19,11 @@ import static org.springframework.util.Assert.notNull;
 
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.dao.support.DaoSupport;
 
 /**
  * BeanFactory that enables injection of MyBatis mapper interfaces. It can be set up with a
@@ -71,7 +73,8 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
     }
 
     /**
-     * {@inheritDoc}
+     * 由于父类实现了 {@link DaoSupport} 所以该方法会被调用
+     * 在 {@link DaoSupport#afterPropertiesSet()}
      */
     @Override
     protected void checkDaoConfig() {
@@ -80,6 +83,11 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
         notNull(this.mapperInterface, "Property 'mapperInterface' is required");
 
         Configuration configuration = getSqlSession().getConfiguration();
+
+        /**
+         * 添加 mapper 至 mybatis 的 configuration 中，但是这里一般运行不到这里，因为在 {@link SqlSessionFactoryBean#buildSqlSessionFactory()}
+         * 会加载 mapper-xml 文件
+         */
         if (this.addToConfig && !configuration.hasMapper(this.mapperInterface)) {
             try {
                 configuration.addMapper(this.mapperInterface);

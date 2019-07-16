@@ -39,6 +39,9 @@ import org.springframework.dao.support.DaoSupport;
  */
 public abstract class SqlSessionDaoSupport extends DaoSupport {
 
+    /**
+     * 初始化是通过 {@link #createSqlSessionTemplate} 方法
+     */
     private SqlSessionTemplate sqlSessionTemplate;
 
     /**
@@ -46,6 +49,12 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
      * Will automatically create SqlSessionTemplate for the given SqlSessionFactory.
      *
      * @param sqlSessionFactory a factory of SqlSession
+     *
+     * 测试下来发现，这个方法是在创建 {@link org.mybatis.spring.mapper.MapperFactoryBean} 的时候被调用，而且是通过反射
+     * 现在疑惑是 spring 为什么会主动设置这个值，虽然 sqlSessionTemplate 是有对应的 get/set 方法，但触发点是什么目前不得而知?
+     * 唯一能解释的就是对 mapper bean 定义采用 MapperFactoryBean，逻辑就是在 {@link org.mybatis.spring.mapper.ClassPathMapperScanner#doScan(String...)}
+     * 因为设置了 definition.setAutowireMode 所以按照类型注入，spring 就会自动查找所有 setXxx 方法，然后根据参数看看有没有这个 bean，有的话就注入，没有跳过
+     * 所以spring通过反射注入 setSqlSessionFactory 所需要的 SqlSessionFactory，同时也就创建了 sqlSessionTemplate
      */
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         if (this.sqlSessionTemplate == null || sqlSessionFactory != this.sqlSessionTemplate.getSqlSessionFactory()) {
